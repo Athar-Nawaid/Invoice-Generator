@@ -18,46 +18,69 @@ import {
 
 export default function App() {
   const [invoiceForm, setInvoiceForm] = useState({
-    qty: 1,
-    price: 0,
-    discountPercent: 0,
-    discount: 0,
-    taxPercent: 0,
-    tax: 0,
-    total: 0
+    qty: "",
+    price: "",
+    discountPercent: "",
+    discount: "",
+    taxPercent: "",
+    tax: "",
+    total: ""
   });
 
   const [invoiceList, setInvoiceList] = useState([]);
 
   function handleFormChange(field, value) {
-    const updated = { ...invoiceForm, [field]: value };
-    const calculated = calculateInvoice(updated, field);
-    setInvoiceForm(calculated);
-  }
+    let safeValue = Math.max(0, Number(value));
 
-  function addInvoice() {
-    const newInvoice = { id: Date.now(), ...invoiceForm };
-    setInvoiceList([...invoiceList, newInvoice]);
+    if (value === "") safeValue = "";
+
+    const updated = {
+      ...invoiceForm,
+      [field]: safeValue
+    };
+
+    const calculated = calculateInvoice(updated, field);
 
     setInvoiceForm({
-      qty: 1,
-      price: 0,
-      discountPercent: 0,
-      discount: 0,
-      taxPercent: 0,
-      tax: 0,
-      total: 0
+      ...calculated,
+      [field]: value === "" ? "" : calculated[field]
     });
   }
 
+  function addInvoice() {
+      const newInvoice = {
+        id: Date.now(),
+        ...calculateInvoice(invoiceForm)
+      };
+
+      setInvoiceList([...invoiceList, newInvoice]);
+
+      setInvoiceForm({
+        qty: "",
+        price: "",
+        discountPercent: "",
+        discount: "",
+        taxPercent: "",
+        tax: "",
+        total: ""
+      });
+    }
+
   function handleRowChange(id, field, value) {
+    let safeValue = Math.max(0, Number(value));
+    if (value === "") safeValue = "";
+
     const updatedList = invoiceList.map((invoice) => {
       if (invoice.id !== id) return invoice;
 
-      const updated = { ...invoice, [field]: value };
+      const updated = { ...invoice, [field]: safeValue };
       const calculated = calculateInvoice(updated, field);
 
-      return { ...invoice, ...calculated };
+      return {
+        ...invoice,
+        ...calculated,
+        [field]: value === "" ? "" : calculated[field]
+      };
     });
 
     setInvoiceList(updatedList);
@@ -82,6 +105,7 @@ export default function App() {
               fullWidth
               value={invoiceForm.qty}
               onChange={(e) => handleFormChange("qty", e.target.value)}
+              inputProps={{ min: 0 }}
             />
           </Grid>
 
@@ -92,6 +116,7 @@ export default function App() {
               fullWidth
               value={invoiceForm.price}
               onChange={(e) => handleFormChange("price", e.target.value)}
+              inputProps={{ min: 0 }}
             />
           </Grid>
 
@@ -104,6 +129,7 @@ export default function App() {
               onChange={(e) =>
                 handleFormChange("discountPercent", e.target.value)
               }
+              inputProps={{ min: 0 }}
             />
           </Grid>
 
@@ -114,6 +140,7 @@ export default function App() {
               fullWidth
               value={invoiceForm.discount}
               onChange={(e) => handleFormChange("discount", e.target.value)}
+              inputProps={{ min: 0 }}
             />
           </Grid>
 
@@ -126,6 +153,7 @@ export default function App() {
               onChange={(e) =>
                 handleFormChange("taxPercent", e.target.value)
               }
+              inputProps={{ min: 0 }}
             />
           </Grid>
 
@@ -136,6 +164,7 @@ export default function App() {
               fullWidth
               value={invoiceForm.tax}
               onChange={(e) => handleFormChange("tax", e.target.value)}
+              inputProps={{ min: 0 }}
             />
           </Grid>
 
@@ -146,15 +175,12 @@ export default function App() {
               fullWidth
               value={invoiceForm.total}
               onChange={(e) => handleFormChange("total", e.target.value)}
+              inputProps={{ min: 0 }}
             />
           </Grid>
 
           <Grid item xs={12}>
-            <Button
-              variant="contained"
-              size="large"
-              onClick={addInvoice}
-            >
+            <Button variant="contained" size="large" onClick={addInvoice}>
               Add Invoice
             </Button>
           </Grid>
@@ -189,6 +215,7 @@ export default function App() {
                     onChange={(e) =>
                       handleRowChange(invoice.id, "qty", e.target.value)
                     }
+                    inputProps={{ min: 0 }}
                   />
                 </TableCell>
 
@@ -199,6 +226,7 @@ export default function App() {
                     onChange={(e) =>
                       handleRowChange(invoice.id, "price", e.target.value)
                     }
+                    inputProps={{ min: 0 }}
                   />
                 </TableCell>
 
@@ -213,6 +241,7 @@ export default function App() {
                         e.target.value
                       )
                     }
+                    inputProps={{ min: 0 }}
                   />
                 </TableCell>
 
@@ -223,6 +252,7 @@ export default function App() {
                     onChange={(e) =>
                       handleRowChange(invoice.id, "discount", e.target.value)
                     }
+                    inputProps={{ min: 0 }}
                   />
                 </TableCell>
 
@@ -237,6 +267,7 @@ export default function App() {
                         e.target.value
                       )
                     }
+                    inputProps={{ min: 0 }}
                   />
                 </TableCell>
 
@@ -247,6 +278,7 @@ export default function App() {
                     onChange={(e) =>
                       handleRowChange(invoice.id, "tax", e.target.value)
                     }
+                    inputProps={{ min: 0 }}
                   />
                 </TableCell>
 
@@ -257,6 +289,7 @@ export default function App() {
                     onChange={(e) =>
                       handleRowChange(invoice.id, "total", e.target.value)
                     }
+                    inputProps={{ min: 0 }}
                   />
                 </TableCell>
               </TableRow>

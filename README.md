@@ -1,70 +1,121 @@
-# Getting Started with Create React App
+# Invoice Generator (React)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is a simple invoice generator built with React. The goal of this project is to allow users to create invoices by entering values such as quantity, price, discount, and tax. All values in the form are connected, so changing one field automatically recalculates the others.
 
-## Available Scripts
+The project was built as a frontend-only assignment using React, without any backend or database.
 
-In the project directory, you can run:
+## Features
 
-### `npm start`
+* Create invoices using an interactive form
+* All fields are editable and dynamically recalculate related values
+* Prevents negative numbers in all fields
+* Inputs do not start with leading zero while typing
+* Submitted invoices appear in a table below the form
+* Inline editing is supported directly inside the table
+* Clean UI built using Material UI components
+* Uses only two React `useState` hooks for state management
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Invoice Fields
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+The invoice form contains the following fields:
 
-### `npm test`
+* Qty
+* Price
+* Discount %
+* Discount
+* Tax %
+* Tax
+* Total Price
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+All fields depend on each other. For example:
 
-### `npm run build`
+* Changing **Qty** or **Price** updates Discount, Tax, and Total
+* Editing **Discount %** recalculates the Discount value
+* Editing **Tax %** updates Tax and Total
+* Editing **Total Price** recalculates other dependent values
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Technologies Used
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+* React (Functional Components)
+* React Hooks (`useState`)
+* Material UI for styling and layout
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## How to Run the Project
 
-### `npm run eject`
+1. Clone the repository
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```
+git clone <repository-url>
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+2. Navigate to the project folder
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```
+cd invoice-generator
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+3. Install dependencies
 
-## Learn More
+```
+npm install
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+4. Install Material UI
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```
+npm install @mui/material @emotion/react @emotion/styled
+```
 
-### Code Splitting
+5. Start the development server
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```
+npm start
+```
 
-### Analyzing the Bundle Size
+The app will run at:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+```
+http://localhost:3000
+```
 
-### Making a Progressive Web App
+## Project Structure
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+```
+src
+ ├── App.js
+ ├── index.js
+ └── styles
+```
 
-### Advanced Configuration
+All the main logic for the invoice calculations and UI lives inside `App.js`.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## Calculation Logic
 
-### Deployment
+The application calculates values using the following general structure:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+* Subtotal = Qty × Price
+* Discount = Subtotal × Discount %
+* After Discount = Subtotal − Discount
+* Tax = After Discount × Tax %
+* Total Price = After Discount + Tax
 
-### `npm run build` fails to minify
+The calculations update automatically whenever any field changes.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Notes
+
+* The project does not include a backend or database.
+* All invoice data is stored temporarily in the React state.
+* Refreshing the page will reset the invoice list.
+
+## Future Improvements
+
+Some possible improvements could include:
+
+* Adding invoice export (PDF or CSV)
+* Adding currency formatting
+* Persisting invoices using local storage
+* Adding validation and better error handling
+
+---
+
+This project focuses mainly on managing dependent form fields and maintaining consistent calculations while keeping the React state minimal.

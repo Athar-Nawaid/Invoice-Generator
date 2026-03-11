@@ -3,13 +3,20 @@ export default function calculateInvoice(data, changedField) {
   let { qty, price, discountPercent, discount, taxPercent, tax, total } = data;
 
   qty = Number(qty);
+  price = Number(price);
+  discountPercent = Number(discountPercent);
+  discount = Number(discount);
+  taxPercent = Number(taxPercent);
+  tax = Number(tax);
+  total = Number(total);
+
   if (isNaN(qty)) qty = 0;
-  price = Number(price) || 0;
-  discountPercent = Number(discountPercent) || 0;
-  discount = Number(discount) || 0;
-  taxPercent = Number(taxPercent) || 0;
-  tax = Number(tax) || 0;
-  total = Number(total) || 0;
+  if (isNaN(price)) price = 0;
+  if (isNaN(discountPercent)) discountPercent = 0;
+  if (isNaN(discount)) discount = 0;
+  if (isNaN(taxPercent)) taxPercent = 0;
+  if (isNaN(tax)) tax = 0;
+  if (isNaN(total)) total = 0;
 
   let subtotal = qty * price;
 
