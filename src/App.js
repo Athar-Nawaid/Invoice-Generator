@@ -1,8 +1,45 @@
 import './App.css';
 import { useState } from 'react';
+import calculateInvoice from './calculateInvoice';
 
-function App() {
+import {
+  Container,
+  Typography,
+  Grid,
+  TextField,
+  Button,
+  Paper,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody
+} from "@mui/material";
+
+export default function App() {
   const [invoiceForm, setInvoiceForm] = useState({
+    qty: 1,
+    price: 0,
+    discountPercent: 0,
+    discount: 0,
+    taxPercent: 0,
+    tax: 0,
+    total: 0
+  });
+
+  const [invoiceList, setInvoiceList] = useState([]);
+
+  function handleFormChange(field, value) {
+    const updated = { ...invoiceForm, [field]: value };
+    const calculated = calculateInvoice(updated, field);
+    setInvoiceForm(calculated);
+  }
+
+  function addInvoice() {
+    const newInvoice = { id: Date.now(), ...invoiceForm };
+    setInvoiceList([...invoiceList, newInvoice]);
+
+    setInvoiceForm({
       qty: 1,
       price: 0,
       discountPercent: 0,
@@ -11,146 +48,162 @@ function App() {
       tax: 0,
       total: 0
     });
-  
-    const [invoiceList, setInvoiceList] = useState([]);
-  
-    function handleFormChange(field, value) {
-      const updated = { ...invoiceForm, [field]: value };
+  }
+
+  function handleRowChange(id, field, value) {
+    const updatedList = invoiceList.map((invoice) => {
+      if (invoice.id !== id) return invoice;
+
+      const updated = { ...invoice, [field]: value };
       const calculated = calculateInvoice(updated, field);
-      setInvoiceForm(calculated);
-    }
-  
-    function addInvoice() {
-      const newInvoice = {
-        id: Date.now(),
-        ...invoiceForm
-      };
-  
-      setInvoiceList([...invoiceList, newInvoice]);
-  
-      setInvoiceForm({
-        qty: 1,
-        price: 0,
-        discountPercent: 0,
-        discount: 0,
-        taxPercent: 0,
-        tax: 0,
-        total: 0
-      });
-    }
-  
-    function handleRowChange(id, field, value) {
-      const updatedList = invoiceList.map((invoice) => {
-        if (invoice.id !== id) return invoice;
-  
-        const updated = { ...invoice, [field]: value };
-        const calculated = calculateInvoice(updated, field);
-  
-        return { ...invoice, ...calculated };
-      });
-  
-      setInvoiceList(updatedList);
-    }
-  
-    return (
-      <div style={{ padding: 30 }}>
-        <h2>Create Invoice</h2>
-  
-        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-          <input
-            type="number"
-            value={invoiceForm.qty}
-            onChange={(e) => handleFormChange("qty", e.target.value)}
-            placeholder="Qty"
-          />
-  
-          <input
-            type="number"
-            value={invoiceForm.price}
-            onChange={(e) => handleFormChange("price", e.target.value)}
-            placeholder="Price"
-          />
-  
-          <input
-            type="number"
-            value={invoiceForm.discountPercent}
-            onChange={(e) =>
-              handleFormChange("discountPercent", e.target.value)
-            }
-            placeholder="Discount %"
-          />
-  
-          <input
-            type="number"
-            value={invoiceForm.discount}
-            onChange={(e) => handleFormChange("discount", e.target.value)}
-            placeholder="Discount"
-          />
-  
-          <input
-            type="number"
-            value={invoiceForm.taxPercent}
-            onChange={(e) => handleFormChange("taxPercent", e.target.value)}
-            placeholder="Tax %"
-          />
-  
-          <input
-            type="number"
-            value={invoiceForm.tax}
-            onChange={(e) => handleFormChange("tax", e.target.value)}
-            placeholder="Tax"
-          />
-  
-          <input
-            type="number"
-            value={invoiceForm.total}
-            onChange={(e) => handleFormChange("total", e.target.value)}
-            placeholder="Total"
-          />
-  
-          <button onClick={addInvoice}>Add Invoice</button>
-        </div>
-  
-        <h2 style={{ marginTop: 40 }}>Invoices</h2>
-  
-        <table border="1" cellPadding="10">
-          <thead>
-            <tr>
-              <th>Qty</th>
-              <th>Price</th>
-              <th>Discount %</th>
-              <th>Discount</th>
-              <th>Tax %</th>
-              <th>Tax</th>
-              <th>Total</th>
-            </tr>
-          </thead>
-  
-          <tbody>
+
+      return { ...invoice, ...calculated };
+    });
+
+    setInvoiceList(updatedList);
+  }
+
+  return (
+    <Container maxWidth="lg" style={{ marginTop: 40 }}>
+      <Typography variant="h4" gutterBottom>
+        Invoice Generator
+      </Typography>
+
+      <Paper style={{ padding: 25, marginBottom: 40 }}>
+        <Typography variant="h6" gutterBottom>
+          Create Invoice
+        </Typography>
+
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={3}>
+            <TextField
+              label="Qty"
+              type="number"
+              fullWidth
+              value={invoiceForm.qty}
+              onChange={(e) => handleFormChange("qty", e.target.value)}
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={3}>
+            <TextField
+              label="Price"
+              type="number"
+              fullWidth
+              value={invoiceForm.price}
+              onChange={(e) => handleFormChange("price", e.target.value)}
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={3}>
+            <TextField
+              label="Discount %"
+              type="number"
+              fullWidth
+              value={invoiceForm.discountPercent}
+              onChange={(e) =>
+                handleFormChange("discountPercent", e.target.value)
+              }
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={3}>
+            <TextField
+              label="Discount"
+              type="number"
+              fullWidth
+              value={invoiceForm.discount}
+              onChange={(e) => handleFormChange("discount", e.target.value)}
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={3}>
+            <TextField
+              label="Tax %"
+              type="number"
+              fullWidth
+              value={invoiceForm.taxPercent}
+              onChange={(e) =>
+                handleFormChange("taxPercent", e.target.value)
+              }
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={3}>
+            <TextField
+              label="Tax"
+              type="number"
+              fullWidth
+              value={invoiceForm.tax}
+              onChange={(e) => handleFormChange("tax", e.target.value)}
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={3}>
+            <TextField
+              label="Total Price"
+              type="number"
+              fullWidth
+              value={invoiceForm.total}
+              onChange={(e) => handleFormChange("total", e.target.value)}
+            />
+          </Grid>
+
+          <Grid item xs={12}>
+            <Button
+              variant="contained"
+              size="large"
+              onClick={addInvoice}
+            >
+              Add Invoice
+            </Button>
+          </Grid>
+        </Grid>
+      </Paper>
+
+      <Paper style={{ padding: 20 }}>
+        <Typography variant="h6" gutterBottom>
+          Invoice List
+        </Typography>
+
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Qty</TableCell>
+              <TableCell>Price</TableCell>
+              <TableCell>Discount %</TableCell>
+              <TableCell>Discount</TableCell>
+              <TableCell>Tax %</TableCell>
+              <TableCell>Tax</TableCell>
+              <TableCell>Total</TableCell>
+            </TableRow>
+          </TableHead>
+
+          <TableBody>
             {invoiceList.map((invoice) => (
-              <tr key={invoice.id}>
-                <td>
-                  <input
+              <TableRow key={invoice.id}>
+                <TableCell>
+                  <TextField
                     type="number"
                     value={invoice.qty}
                     onChange={(e) =>
                       handleRowChange(invoice.id, "qty", e.target.value)
                     }
                   />
-                </td>
-  
-                <td>
-                  <input
+                </TableCell>
+
+                <TableCell>
+                  <TextField
                     type="number"
                     value={invoice.price}
                     onChange={(e) =>
                       handleRowChange(invoice.id, "price", e.target.value)
                     }
                   />
-                </td>
-  
-                <td>
-                  <input
+                </TableCell>
+
+                <TableCell>
+                  <TextField
                     type="number"
                     value={invoice.discountPercent}
                     onChange={(e) =>
@@ -161,20 +214,20 @@ function App() {
                       )
                     }
                   />
-                </td>
-  
-                <td>
-                  <input
+                </TableCell>
+
+                <TableCell>
+                  <TextField
                     type="number"
                     value={invoice.discount}
                     onChange={(e) =>
                       handleRowChange(invoice.id, "discount", e.target.value)
                     }
                   />
-                </td>
-  
-                <td>
-                  <input
+                </TableCell>
+
+                <TableCell>
+                  <TextField
                     type="number"
                     value={invoice.taxPercent}
                     onChange={(e) =>
@@ -185,33 +238,32 @@ function App() {
                       )
                     }
                   />
-                </td>
-  
-                <td>
-                  <input
+                </TableCell>
+
+                <TableCell>
+                  <TextField
                     type="number"
                     value={invoice.tax}
                     onChange={(e) =>
                       handleRowChange(invoice.id, "tax", e.target.value)
                     }
                   />
-                </td>
-  
-                <td>
-                  <input
+                </TableCell>
+
+                <TableCell>
+                  <TextField
                     type="number"
                     value={invoice.total}
                     onChange={(e) =>
                       handleRowChange(invoice.id, "total", e.target.value)
                     }
                   />
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
-      </div>
-    );
+          </TableBody>
+        </Table>
+      </Paper>
+    </Container>
+  );
 }
-
-export default App;
